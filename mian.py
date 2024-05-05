@@ -4,20 +4,23 @@ import button  # Importing the Button class
 import one_player
 import two_player
 
+current_dir = os.path.dirname(__file__)
+
 # Initialize Pygame
 pygame.font.init()
 pygame.mixer.init()
 
+
 # Music
 pygame.mixer.music.load(os.path.join("Assets", "Sounds", "CHAMPION.ogg"))
 pygame.mixer.music.set_volume(1.0) 
-start_music = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "game_start.wav"))
+start_music = pygame.mixer.Sound(os.path.join(current_dir, "Assets", "Sounds", "game_start.wav"))
 
 # Constants
 MENU_FONT = pygame.font.SysFont('comicsans', 40)
 WHITE = (255,255,255)
 FPS = 60
-BG = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "Background", "background-black.png")), (1360, 768))
+BG = pygame.transform.scale(pygame.image.load(os.path.join(current_dir, "Assets", "Background", "background-black.png")), (1360, 768))
 
 # Pygame setup
 pygame.init()
@@ -26,14 +29,14 @@ WIDTH, HEIGHT = screen.get_size()
 pygame.display.set_caption("Space Battle")
 
 # Initialize menu components
-resume_img = pygame.image.load(os.path.join("images", "button_resume.png")).convert_alpha()
-options_img = pygame.image.load(os.path.join("images", "button_options.png")).convert_alpha()
-quit_img = pygame.image.load(os.path.join("images", "button_quit.png")).convert_alpha()
-video_img = pygame.image.load(os.path.join("images", "button_video.png")).convert_alpha()
-audio_img = pygame.image.load(os.path.join("images", "button_audio.png")).convert_alpha()
-keys_img = pygame.image.load(os.path.join("images", "button_keys.png")).convert_alpha()
-back_img = pygame.image.load(os.path.join("images", "button_back.png")).convert_alpha()
-start_img = pygame.image.load(os.path.join("images", "start.png")).convert_alpha()
+resume_img = pygame.image.load(os.path.join(current_dir, "images", "button_resume.png")).convert_alpha()
+options_img = pygame.image.load(os.path.join(current_dir, "images", "button_options.png")).convert_alpha()
+quit_img = pygame.image.load(os.path.join(current_dir, "images", "button_quit.png")).convert_alpha()
+video_img = pygame.image.load(os.path.join(current_dir, "images", "button_video.png")).convert_alpha()
+audio_img = pygame.image.load(os.path.join(current_dir, "images", "button_audio.png")).convert_alpha()
+keys_img = pygame.image.load(os.path.join(current_dir, "images", "button_keys.png")).convert_alpha()
+back_img = pygame.image.load(os.path.join(current_dir, "images", "button_back.png")).convert_alpha()
+start_img = pygame.image.load(os.path.join(current_dir, "images", "start.png")).convert_alpha()
 
 # Create button instances
 start_button = button.Button(600, 220, start_img, 1)
