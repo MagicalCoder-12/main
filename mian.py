@@ -9,15 +9,15 @@ pygame.font.init()
 pygame.mixer.init()
 
 # Music
-pygame.mixer.music.load('D:\\programs\\pygame\\Space\\Assets\\Sounds\\CHAMPION.ogg')
+pygame.mixer.music.load(os.path.join("Assets", "Sounds", "CHAMPION.ogg"))
 pygame.mixer.music.set_volume(1.0) 
-start_music = pygame.mixer.Sound('D:\\programs\\pygame\\Space\\Assets\\Sounds\\game_start.wav')
+start_music = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "game_start.wav"))
 
 # Constants
 MENU_FONT = pygame.font.SysFont('comicsans', 40)
 WHITE = (255,255,255)
 FPS = 60
-BG = pygame.transform.scale(pygame.image.load(os.path.join(r'D:\programs\pygame\Space\Assets\Background\background-black.png')), (1360, 768))
+BG = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "Background", "background-black.png")), (1360, 768))
 
 # Pygame setup
 pygame.init()
@@ -26,14 +26,14 @@ WIDTH, HEIGHT = screen.get_size()
 pygame.display.set_caption("Space Battle")
 
 # Initialize menu components
-resume_img = pygame.image.load("images/button_resume.png").convert_alpha()
-options_img = pygame.image.load("images/button_options.png").convert_alpha()
-quit_img = pygame.image.load("images/button_quit.png").convert_alpha()
-video_img = pygame.image.load('images/button_video.png').convert_alpha()
-audio_img = pygame.image.load('images/button_audio.png').convert_alpha()
-keys_img = pygame.image.load('images/button_keys.png').convert_alpha()
-back_img = pygame.image.load('images/button_back.png').convert_alpha()
-start_img = pygame.image.load('images/start.png').convert_alpha()
+resume_img = pygame.image.load(os.path.join("images", "button_resume.png")).convert_alpha()
+options_img = pygame.image.load(os.path.join("images", "button_options.png")).convert_alpha()
+quit_img = pygame.image.load(os.path.join("images", "button_quit.png")).convert_alpha()
+video_img = pygame.image.load(os.path.join("images", "button_video.png")).convert_alpha()
+audio_img = pygame.image.load(os.path.join("images", "button_audio.png")).convert_alpha()
+keys_img = pygame.image.load(os.path.join("images", "button_keys.png")).convert_alpha()
+back_img = pygame.image.load(os.path.join("images", "button_back.png")).convert_alpha()
+start_img = pygame.image.load(os.path.join("images", "start.png")).convert_alpha()
 
 # Create button instances
 start_button = button.Button(600, 220, start_img, 1)
@@ -44,7 +44,6 @@ video_button = button.Button(226, 75, video_img, 1)
 audio_button = button.Button(225, 200, audio_img, 1)
 keys_button = button.Button(246, 325, keys_img, 1)
 back_button = button.Button(600, 450, back_img, 1)
-
 
 oneplayer_text = MENU_FONT.render("1 Player", 2, WHITE)
 twoplayer_text = MENU_FONT.render("VS Mode", 2, WHITE)
@@ -121,7 +120,6 @@ def options_action():
             print("Change Key Bindings")
         if back_button.draw(screen):
             menu_state = "main"
-
 
 def quit_action():
     pygame.quit()
