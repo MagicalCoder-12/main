@@ -6,7 +6,6 @@ import sys
 pygame.init()
 pygame.mixer.init()
 
-
 # Get the screen dimensions
 screen_info = pygame.display.Info()
 WIDTH, HEIGHT = screen_info.current_w, screen_info.current_h
@@ -16,54 +15,54 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Space Shooter")
 
 # Load background
-BG = pygame.transform.scale(pygame.image.load(os.path.join(r'D:\programs\pygame\Space\main\Assets\Background\Universe.png')), (WIDTH, HEIGHT))
+BG = pygame.transform.scale(pygame.image.load(os.path.join("Assets", "Background", "Universe.png")), (WIDTH, HEIGHT))
 
 # Load spaceship sprite sheets
-SPACESHIP_BLUE_SHEET = pygame.image.load(os.path.join(r'D:\programs\pygame\Space\main\Assets\MainCharacters\Spaceships\spaceship_blue_spritesheet.png'))
-SPACESHIP_RED_SHEET = pygame.image.load(os.path.join(r'D:\programs\pygame\Space\main\Assets\MainCharacters\Spaceships\spaceship_red_spritesheet.png'))
-SPACESHIP_SHADOW_SHEET = pygame.image.load(os.path.join(r'D:\programs\pygame\Space\main\Assets\MainCharacters\Spaceships\spaceship_shadow_spritesheet.png'))
+SPACESHIP_BLUE_SHEET = pygame.image.load(os.path.join("Assets", "MainCharacters", "Spaceships", "spaceship_blue_spritesheet.png"))
+SPACESHIP_RED_SHEET = pygame.image.load(os.path.join("Assets", "MainCharacters", "Spaceships", "spaceship_red_spritesheet.png"))
+SPACESHIP_SHADOW_SHEET = pygame.image.load(os.path.join("Assets", "MainCharacters", "Spaceships", "spaceship_shadow_spritesheet.png"))
 
-RED_SPACE_SHIP = pygame.image.load(os.path.join(r"D:\programs\pygame\Space\main\Assets\pixel_ship_red_small.png"))
-GREEN_SPACE_SHIP = pygame.image.load(os.path.join(r"D:\programs\pygame\Space\main\Assets\pixel_ship_green_small.png"))
-BLUE_SPACE_SHIP = pygame.image.load(os.path.join(r"D:\programs\pygame\Space\main\Assets\pixel_ship_blue_small.png"))
-YELLOW_SPACE_SHIP = pygame.image.load(os.path.join(r"D:\programs\pygame\Space\main\Assets\pixel_ship_yellow.png"))
+RED_SPACE_SHIP = pygame.image.load(os.path.join("Assets", "pixel_ship_red_small.png"))
+GREEN_SPACE_SHIP = pygame.image.load(os.path.join("Assets", "pixel_ship_green_small.png"))
+BLUE_SPACE_SHIP = pygame.image.load(os.path.join("Assets", "pixel_ship_blue_small.png"))
+YELLOW_SPACE_SHIP = pygame.image.load(os.path.join("Assets", "pixel_ship_yellow.png"))
 YELLOW_ENEMY_SHIP = pygame.transform.rotate(YELLOW_SPACE_SHIP, 180)
+
 # Load the original image
-original_image = pygame.image.load(r'D:\programs\pygame\Space\main\Assets\alien.png')
+original_image = pygame.image.load(os.path.join("Assets", "alien.png"))
 
 # Get the original width and height
 original_width = original_image.get_width()
 original_height = original_image.get_height()
 
 # Calculate the desired width and height for resizing
-desired_width = original_width * 3  # Double the original width
-desired_height = original_height * 3  # Double the original height
+desired_width = original_width * 3
+desired_height = original_height * 3
 
 # Resize the image
 PURPLE_ENEMY_SHIP = pygame.transform.scale(original_image, (desired_width, desired_height))
-# Set the color key
 PURPLE_ENEMY_SHIP.set_colorkey((255, 255, 255))
 
 # Load collectibles sprite sheets
-APPLE_SHEET = pygame.image.load(os.path.join(r'D:\programs\pygame\Space\main\Assets\Items\Fruits\Apple.png'))
-BANANA_SHEET = pygame.image.load(os.path.join(r'D:\programs\pygame\Space\main\Assets\Items\Fruits\Bananas.png'))
-STRAWBERRY_SHEET = pygame.image.load(os.path.join(r'D:\programs\pygame\Space\main\Assets\Items\Fruits\Strawberry.png'))
+APPLE_SHEET = pygame.image.load(os.path.join("Assets", "Items", "Fruits", "Apple.png"))
+BANANA_SHEET = pygame.image.load(os.path.join("Assets", "Items", "Fruits", "Bananas.png"))
+STRAWBERRY_SHEET = pygame.image.load(os.path.join("Assets", "Items", "Fruits", "Strawberry.png"))
 
 # Load collected effect sprite sheet
-COLLECTED_EFFECT_SHEET = pygame.image.load(os.path.join(r'D:\programs\pygame\Space\main\Assets\Items\Fruits\Collected.png'))
+COLLECTED_EFFECT_SHEET = pygame.image.load(os.path.join("Assets", "Items", "Fruits", "Collected.png"))
 
 # Lasers
-RED_LASER = pygame.image.load(os.path.join(r"D:\programs\pygame\Space\main\Assets\pixel_laser_red.png"))
-GREEN_LASER = pygame.image.load(os.path.join(r"D:\programs\pygame\Space\main\Assets\pixel_laser_green.png"))
-BLUE_LASER = pygame.image.load(os.path.join(r"D:\programs\pygame\Space\main\Assets\pixel_laser_blue.png"))
-YELLOW_LASER = pygame.image.load(os.path.join(r"D:\programs\pygame\Space\main\Assets\pixel_laser_yellow.png"))
-PURPLE_LASER = pygame.image.load(os.path.join(r"D:\programs\pygame\Space\main\Assets\pixel_laser_purple.png")).convert()
+RED_LASER = pygame.image.load(os.path.join("Assets", "pixel_laser_red.png"))
+GREEN_LASER = pygame.image.load(os.path.join("Assets", "pixel_laser_green.png"))
+BLUE_LASER = pygame.image.load(os.path.join("Assets", "pixel_laser_blue.png"))
+YELLOW_LASER = pygame.image.load(os.path.join("Assets", "pixel_laser_yellow.png"))
+PURPLE_LASER = pygame.image.load(os.path.join("Assets", "pixel_laser_purple.png")).convert()
 PURPLE_LASER.set_colorkey((0, 0, 0))
 
-BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join('D:\\programs\\pygame\\Space\\main\\Assets\\Sounds\\Grenade-1.ogg'))
-BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join(r'D:\programs\pygame\Space\main\Assets\Sounds\shot.wav'))
-BULLET_FIRE_SOUND.set_volume(0.4) 
-
+# Sounds
+BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "Grenade-1.ogg"))
+BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "shot.wav"))
+BULLET_FIRE_SOUND.set_volume(0.4)
 
 # Define the number of rows and columns in the sprite sheet
 ROWS = 1
