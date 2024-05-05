@@ -1,6 +1,8 @@
 import pygame
 import os
 
+# Get the directory of the current script
+current_dir = os.path.dirname(__file__)
 
 pygame.font.init()
 pygame.mixer.init()
@@ -16,8 +18,8 @@ WIN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Space Battle")
 
 BORDER = pygame.Rect(WIN.get_width() // 2 - 5, 0, 10, WIN.get_height())
-BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join('D:\\programs\\pygame\\Space\\Assets\\Sounds\\Grenade-1.ogg'))
-BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join('D:\\programs\\pygame\\Space\\Assets\\Sounds\\Gun-Silencer.ogg'))
+BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join(current_dir, 'Assets', 'Sounds', 'Grenade-1.ogg'))
+BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join(current_dir, 'Assets', 'Sounds', 'Gun-Silencer.ogg'))
 
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
 WINNER_FONT = pygame.font.SysFont('comicsans', 100)
@@ -31,13 +33,13 @@ SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 70, 50
 YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
 
-YELLOW_SPACESHIP_IMAGE = pygame.image.load(r'D:\programs\pygame\Space\main\Assets\spaceship_yellow.png')
+YELLOW_SPACESHIP_IMAGE = pygame.image.load(os.path.join(current_dir, 'Assets', 'spaceship_yellow.png'))
 YELLOW_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(YELLOW_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 90)
 
-RED_SPACESHIP_IMAGE = pygame.image.load(r'D:\programs\pygame\Space\main\Assets\spaceship_red.png')
+RED_SPACESHIP_IMAGE = pygame.image.load(os.path.join(current_dir, 'Assets', 'spaceship_red.png'))
 RED_SPACESHIP = pygame.transform.rotate(pygame.transform.scale(RED_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 270)
 
-SPACE = pygame.transform.scale(pygame.image.load(os.path.join(r'D:\programs\pygame\Space\main\Assets\Background\space.png')), (WIN.get_width(), WIN.get_height()))
+SPACE = pygame.transform.scale(pygame.image.load(os.path.join(current_dir, 'Assets', 'Background', 'space.png')), (WIN.get_width(), WIN.get_height()))
 
 def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_health):
     global WIN, SPACE, BORDER
@@ -111,11 +113,11 @@ def run_space():
     red_health = 10
     yellow_health = 10
 
-    pygame.mixer.music.load(r'D:\programs\pygame\Space\main\Assets\Sounds\music2.wav')
+    pygame.mixer.music.load(os.path.join(current_dir, 'Assets', 'Sounds', 'music2.wav'))
     pygame.mixer.music.set_volume(0.6)
     pygame.mixer.music.play(-1)
 
-    start_music = pygame.mixer.Sound(r'D:\programs\pygame\Space\main\Assets\Sounds\game_start.wav')
+    start_music = pygame.mixer.Sound(os.path.join(current_dir, 'Assets', 'Sounds', 'game_start.wav'))
     start_music.set_volume(1.0)
     start_music.play()
 
