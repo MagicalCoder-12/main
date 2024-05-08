@@ -29,14 +29,14 @@ WIDTH, HEIGHT = screen.get_size()
 pygame.display.set_caption("Space Battle")
 
 # Initialize menu components
-resume_img = pygame.image.load(os.path.join(current_dir, "images", "button_resume.png")).convert_alpha()
-options_img = pygame.image.load(os.path.join(current_dir, "images", "button_options.png")).convert_alpha()
-quit_img = pygame.image.load(os.path.join(current_dir, "images", "button_quit.png")).convert_alpha()
-video_img = pygame.image.load(os.path.join(current_dir, "images", "button_video.png")).convert_alpha()
-audio_img = pygame.image.load(os.path.join(current_dir, "images", "button_audio.png")).convert_alpha()
-keys_img = pygame.image.load(os.path.join(current_dir, "images", "button_keys.png")).convert_alpha()
-back_img = pygame.image.load(os.path.join(current_dir, "images", "button_back.png")).convert_alpha()
-start_img = pygame.image.load(os.path.join(current_dir, "images", "start.png")).convert_alpha()
+resume_img = pygame.image.load(os.path.join(current_dir, "Assets","Menu","Buttons","button_resume.png")).convert_alpha()
+options_img = pygame.image.load(os.path.join(current_dir, "Assets","Menu","Buttons","button_options.png")).convert_alpha()
+quit_img = pygame.image.load(os.path.join(current_dir, "Assets","Menu","Buttons", "button_quit.png")).convert_alpha()
+video_img = pygame.image.load(os.path.join(current_dir, "Assets","Menu","Buttons", "button_video.png")).convert_alpha()
+audio_img = pygame.image.load(os.path.join(current_dir, "Assets","Menu","Buttons", "button_audio.png")).convert_alpha()
+keys_img = pygame.image.load(os.path.join(current_dir, "Assets","Menu","Buttons", "button_keys.png")).convert_alpha()
+back_img = pygame.image.load(os.path.join(current_dir, "Assets","Menu","Buttons", "button_back.png")).convert_alpha()
+start_img = pygame.image.load(os.path.join(current_dir, "Assets","Menu","Buttons", "start.png")).convert_alpha()
 
 # Create button instances
 start_button = button.Button(600, 220, start_img, 1)
