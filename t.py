@@ -4,24 +4,20 @@ import random
 
 # Initialize Pygame
 pygame.init()
-
-# Constants
 FPS = 60
 WIDTH = 900
 HEIGHT = 700
 Gravity = 0.5
-BG = (250, 250, 250)
 
 # Set up the window
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption('Spritesheets')
 
-# Load assets
+# Load background
+BG = (250, 250, 250)
+
 SPACESHIP_RED_SHEET = pygame.image.load(os.path.join("Assets", "MainCharacters", "Spaceships", "spaceship_red_spritesheet.png"))
 ASTROID = pygame.image.load(os.path.join("Assets", "Other", "asteroid_large_1.png"))
-BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "Grenade-1.ogg"))
-BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "player_shoot.wav"))
-BULLET_FIRE_SOUND.set_volume(0.4)
 
 # Define the number of rows and columns in the sprite sheet
 ROWS = 1
@@ -31,12 +27,17 @@ COLS = 5
 FRAME_WIDTH = SPACESHIP_RED_SHEET.get_width() // COLS
 FRAME_HEIGHT = SPACESHIP_RED_SHEET.get_height() // ROWS
 
+# Create lists to store individual frames for each spaceship
 SPACESHIP_RED_FRAMES = []
+BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "Grenade-1.ogg"))
+BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "player_shoot.wav"))
+BULLET_FIRE_SOUND.set_volume(0.4)
+
 for row in range(ROWS):
     for col in range(COLS):
         frame_red = pygame.transform.scale(SPACESHIP_RED_SHEET.subsurface(col * FRAME_WIDTH, row * FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT), (FRAME_WIDTH * 3, FRAME_HEIGHT * 3))
         SPACESHIP_RED_FRAMES.append(frame_red)
-# Classes
+
 class Laser:
     def __init__(self, x, y, img):
         self.x = x
@@ -54,9 +55,7 @@ class Laser:
         return not(self.y <= height and self.y >= 0)
 
     def collision(self, obj):
-        offset_x = obj.x - self.x
-        offset_y = obj.y - self.y
-        return self.mask.overlap(obj.mask, (offset_x, offset_y)) is not None
+        return collide(self, obj)
 
 class Ship:
     COOLDOWN = 10
@@ -154,13 +153,16 @@ class Player(Ship):
         if keys[pygame.K_DOWN] and self.y + self.vel + self.get_height() + 15 < HEIGHT:  # Move down (+15 for extra space below)
             self.y += self.vel
 
+
+
     def shoot(self):
-        # Adjust laser starting position
+    # Adjust laser starting position
         if self.shoot_cooldown == 0 and (pygame.time.get_ticks() - self.continuous_shoot_start_time <= 10000 or self.continuous_shoot_start_time == 0):
             laser = Laser(self.x + self.img.get_width() // 2 - self.laser_img.get_width() // 2, self.y, self.laser_img)
             self.lasers.append(laser)
             # Reset shoot cooldown
             self.shoot_cooldown = 20  # Set the cooldown period (adjust as needed)
+
 
     def move_lasers(self, vel, objs):
         for laser in self.lasers:
@@ -247,15 +249,13 @@ def collide(obj1, obj2):
     offset_y = obj2.y - obj1.y
     return obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) is not None
 
-# Define the base directory path
-base_dir = os.path.dirname(os.path.abspath(__file__))  # Assuming this code is in the same directory as the Assets folder
-
-# Define the relative paths from the base directory
+# Create instances of PowerUp class
 powerup_images = [
-    os.path.relpath(os.path.join(base_dir, 'Assets', 'Items', 'Fruits', 'Apple.png')),
-    os.path.relpath(os.path.join(base_dir, 'Assets', 'Items', 'Fruits', 'Bananas.png')),
-    os.path.relpath(os.path.join(base_dir, 'Assets', 'Items', 'Fruits', 'Strawberry.png'))
+    os.path.join(r'D:\programs\pygame\Assets\Items\Fruits\Apple.png'),
+    os.path.join(r'D:\programs\pygame\Assets\Items\Fruits\Bananas.png'),
+    os.path.join(r'D:\programs\pygame\Assets\Items\Fruits\Strawberry.png')
 ]
+
 # Create an empty list to store PowerUp instances
 powerups = []
 
@@ -271,8 +271,12 @@ add_random_powerup()
 
 # Timer variables
 last_powerup_time = pygame.time.get_ticks()
-powerup_interval = 2000  # 2 seconds
+# Define the range for random power-up interval
+min_powerup_interval = 5000  # 5 seconds (in milliseconds)
+max_powerup_interval = 15000  # 15 seconds (in milliseconds)
 
+# Randomly select the power-up interval within the defined range
+powerup_interval = random.randint(min_powerup_interval, max_powerup_interval)
 
 # Asteroid variables
 ASTEROID_WIDTH = 29
@@ -459,11 +463,20 @@ def main():
             player.lasers.remove(laser)
 
 
+
         # Draw and update power-ups
         for powerup in powerups:
-            powerup.update()
-            powerup.draw(screen)
-
+            # Check if power-up is collected by colliding with the player or an asteroid
+            collected = False
+            if collide(player, powerup):
+                collected = True
+            for asteroid in asteroids:
+                if check_collision_lasers_asteroid(player.lasers, asteroid['x'], asteroid['y']):
+                    collected = True
+                    break
+            if not collected:
+                powerup.update()
+                powerup.draw(screen)
 
         # Check if player's health is zero or less
         if player.health <= 0:
