@@ -4,20 +4,24 @@ import random
 
 # Initialize Pygame
 pygame.init()
+
+# Constants
 FPS = 60
 WIDTH = 900
 HEIGHT = 700
 Gravity = 0.5
+BG = (250, 250, 250)
 
 # Set up the window
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption('Spritesheets')
 
-# Load background
-BG = (250, 250, 250)
-
+# Load assets
 SPACESHIP_RED_SHEET = pygame.image.load(os.path.join("Assets", "MainCharacters", "Spaceships", "spaceship_red_spritesheet.png"))
 ASTROID = pygame.image.load(os.path.join("Assets", "Other", "asteroid_large_1.png"))
+BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "Grenade-1.ogg"))
+BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "player_shoot.wav"))
+BULLET_FIRE_SOUND.set_volume(0.4)
 
 # Define the number of rows and columns in the sprite sheet
 ROWS = 1
@@ -27,17 +31,12 @@ COLS = 5
 FRAME_WIDTH = SPACESHIP_RED_SHEET.get_width() // COLS
 FRAME_HEIGHT = SPACESHIP_RED_SHEET.get_height() // ROWS
 
-# Create lists to store individual frames for each spaceship
 SPACESHIP_RED_FRAMES = []
-BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "Grenade-1.ogg"))
-BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "player_shoot.wav"))
-BULLET_FIRE_SOUND.set_volume(0.4)
-
 for row in range(ROWS):
     for col in range(COLS):
         frame_red = pygame.transform.scale(SPACESHIP_RED_SHEET.subsurface(col * FRAME_WIDTH, row * FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT), (FRAME_WIDTH * 3, FRAME_HEIGHT * 3))
         SPACESHIP_RED_FRAMES.append(frame_red)
-
+# Classes
 class Laser:
     def __init__(self, x, y, img):
         self.x = x
@@ -55,7 +54,9 @@ class Laser:
         return not(self.y <= height and self.y >= 0)
 
     def collision(self, obj):
-        return collide(self, obj)
+        offset_x = obj.x - self.x
+        offset_y = obj.y - self.y
+        return self.mask.overlap(obj.mask, (offset_x, offset_y)) is not None
 
 class Ship:
     COOLDOWN = 10
@@ -153,16 +154,13 @@ class Player(Ship):
         if keys[pygame.K_DOWN] and self.y + self.vel + self.get_height() + 15 < HEIGHT:  # Move down (+15 for extra space below)
             self.y += self.vel
 
-
-
     def shoot(self):
-    # Adjust laser starting position
+        # Adjust laser starting position
         if self.shoot_cooldown == 0 and (pygame.time.get_ticks() - self.continuous_shoot_start_time <= 10000 or self.continuous_shoot_start_time == 0):
             laser = Laser(self.x + self.img.get_width() // 2 - self.laser_img.get_width() // 2, self.y, self.laser_img)
             self.lasers.append(laser)
             # Reset shoot cooldown
             self.shoot_cooldown = 20  # Set the cooldown period (adjust as needed)
-
 
     def move_lasers(self, vel, objs):
         for laser in self.lasers:
