@@ -195,17 +195,17 @@ class Player(Ship):
 
 # Define the PowerUp class
 class PowerUp:
-    def __init__(self, image_path, animation_steps, pos, scale_factor=2):  # Add a scale_factor parameter with a default value of 2
+    def __init__(self, image_path, animation_steps, pos, scale_factor=2):
         self.image_list = []
-        self.load_images(image_path, animation_steps, scale_factor)  # Pass the scale_factor to the load_images method
+        self.load_images(image_path, animation_steps, scale_factor)
         self.pos = pos
-        self.x = pos[0]  # Initialize x position
-        self.y = pos[1]  # Initialize y position
+        self.x = pos[0]
+        self.y = pos[1]
         self.frame = 0
         self.animation_cooldown = 75
         self.last_update = pygame.time.get_ticks()
         self.gravity = 1.0
-        self.mask = pygame.mask.from_surface(self.image_list[self.frame])  # Create mask from the current frame
+        self.mask = pygame.mask.from_surface(self.image_list[self.frame])
         self.type = self.get_type_from_image_path(image_path)
 
     def load_images(self, image_path, animation_steps, scale_factor):
@@ -213,7 +213,7 @@ class PowerUp:
         width, height = image.get_width() // animation_steps, image.get_height()
         for x in range(animation_steps):
             scaled_image = pygame.transform.scale(image.subsurface(x * width, 0, width, height), (width * scale_factor, height * scale_factor))
-            self.image_list.append(scaled_image)  # Scale each image and append to the image_list
+            self.image_list.append(scaled_image)
 
     def update(self):
         current_time = pygame.time.get_ticks()
@@ -222,16 +222,15 @@ class PowerUp:
             self.last_update = current_time
             if self.frame >= len(self.image_list):
                 self.frame = 0
-            self.mask = pygame.mask.from_surface(self.image_list[self.frame])  # Update mask when frame changes
+            self.mask = pygame.mask.from_surface(self.image_list[self.frame])
         self.pos[1] += self.gravity
-        self.y = self.pos[1]  # Update y position
+        self.y = self.pos[1]
         if self.pos[1] > HEIGHT:
             self.pos[1] = -32
-            self.y = self.pos[1]  # Reset y position if power-up goes off-screen
+            self.y = self.pos[1]
 
     def draw(self, screen):
         screen.blit(self.image_list[self.frame], self.pos)
-
 
     def get_type_from_image_path(self, image_path):
         filename = os.path.basename(image_path)
@@ -404,11 +403,6 @@ def main():
                     # Activate invincibility for 10 seconds
                     player.invincible_start_time = pygame.time.get_ticks()+10000
 
-        # Update and draw power-ups
-        for powerup in powerups:
-            powerup.update()
-            powerup.draw(screen)
-
         # Display score
         font = pygame.font.SysFont(None, 36)
         if pygame.time.get_ticks() <= double_bonus:
@@ -439,18 +433,37 @@ def main():
             if check_collision_player_asteroid(player, asteroid['x'], asteroid['y']):
                 if pygame.time.get_ticks() - player.invincible_start_time >= 1000 or player.invincible_start_time == 0:
                     player.health -= 10  # Decrement player health by 10
+                    score += 10
                 asteroids.remove(asteroid)  # Remove the collided asteroid
-                score += 10  # Decrease score by 10
-
-
+                # Create a power-up at the asteroid's position
+                new_powerup_pos = [asteroid['x'], asteroid['y']]
+                random_powerup_image = random.choice(powerup_images)
+                new_powerup = PowerUp(random_powerup_image, 17, new_powerup_pos, scale_factor=2)
+                powerups.append(new_powerup)
 
         # Check collisions between lasers and asteroids
+        lasers_to_remove = []  # Create a list to store lasers that need to be removed
         for laser in player.lasers:
             for asteroid in asteroids:
                 if check_collision_lasers_asteroid([laser], asteroid['x'], asteroid['y']):
-                    player.lasers.remove(laser)  # Remove the collided laser
+                    new_powerup_pos = [asteroid['x'], asteroid['y']]
+                    random_powerup_image = random.choice(powerup_images)
+                    new_powerup = PowerUp(random_powerup_image, 17, new_powerup_pos, scale_factor=2)
+                    powerups.append(new_powerup)
+                    lasers_to_remove.append(laser)  # Add the laser to the removal list
                     asteroids.remove(asteroid)  # Remove the collided asteroid
-                    score += 10  # Increase score by 10
+                    break  # Break out of the inner loop after collision detection
+
+        # Remove lasers that collided with asteroids
+        for laser in lasers_to_remove:
+            player.lasers.remove(laser)
+
+
+        # Draw and update power-ups
+        for powerup in powerups:
+            powerup.update()
+            powerup.draw(screen)
+
 
         # Check if player's health is zero or less
         if player.health <= 0:
