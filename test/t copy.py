@@ -276,7 +276,7 @@ powerup_interval = 2000  # 2 seconds
 
 
 # Asteroid variables
-ASTEROID_WIDTH = 29
+ASTEROID_WIDTH = 50
 ASTEROID_HEIGHT = 29
 asteroid_x = random.randint(0, WIDTH - ASTEROID_WIDTH)  # Randomize asteroid's initial x position
 asteroid_y = -ASTEROID_HEIGHT  # Start asteroid above the screen
@@ -345,14 +345,13 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        if mouse_x - player.get_width() / 2 > 0:
-            if mouse_x + player.get_width() / 2 < WIDTH:
+        if mouse_x - player.get_width() / 2 > 0:  # Check if moving left will keep the ship within the left boundary
+            if mouse_x + player.get_width() / 2 < WIDTH:  # Check if moving right will keep the ship within the right boundary
                 player.x = mouse_x - player.get_width() / 2
 
-        if mouse_y - player.get_height() / 2 > 0:
-            if mouse_y + player.get_height() / 2 < HEIGHT:
+        if mouse_y - player.get_height() / 2 > 0:  # Check if moving up will keep the ship within the top boundary
+            if mouse_y + player.get_height() / 2 < HEIGHT:  # Check if moving down will keep the ship within the bottom boundary
                 player.y = mouse_y - player.get_height() / 2
 
         # Shooting logic for continuous shooting while space key is held down
@@ -363,94 +362,95 @@ def main():
         if pygame.mouse.get_pressed()[0]:  # Left mouse button
             player.shoot()
 
-        # Draw and move the asteroids
-        draw_asteroids(screen)
-        move_asteroids()
-
-        # Update and remove off-screen lasers
-        player.move_lasers(-5, asteroids)
-
-        # Draw and update power-ups
-        for powerup in powerups:
-            powerup.update()
-            powerup.draw(screen)
+        # Move the player
+        player.move()
 
         # Draw the player
         player.draw(screen)
 
+
         # Draw and update lasers
         for laser in player.lasers:
             laser.draw(screen)
-            laser.move(-2)
+            laser.move(-2)  # Adjust the velocity as needed
+
+        # Update and remove off-screen lasers
+        player.move_lasers(-5, [])
 
         # Randomly add power-ups
         current_time = pygame.time.get_ticks()
         if current_time - last_powerup_time >= powerup_interval:
-            add_random_powerup()
+            random_powerup_image = random.choice(powerup_images)
+            random_pos = [random.randint(0, WIDTH - 32), -32]
+            random_powerup = PowerUp(random_powerup_image, 17, random_pos, scale_factor=2)  # Increase the scale_factor to 3
+            powerups.append(random_powerup)
             last_powerup_time = current_time
 
-        # Check collisions between player and asteroids
-        for asteroid in asteroids:
-            if check_collision_player_asteroid(player, asteroid['x'], asteroid['y']):
-                if pygame.time.get_ticks() - player.invincible_start_time >= 1000 or player.invincible_start_time == 0:
-                    player.health -= 10
-                asteroids.remove(asteroid)
-                score += 10
-                # Draw and update power-ups when player collides with an asteroid
-                for powerup in powerups:
-                    powerup.update()
-                    powerup.draw(screen)
-
-        # Check collisions between lasers and asteroids
-        lasers_to_remove = []
-        for laser in player.lasers:
-            for asteroid in asteroids:
-                if check_collision_lasers_asteroid([laser], asteroid['x'], asteroid['y']):
-                    lasers_to_remove.append(laser)
-                    asteroids.remove(asteroid)
-                    score += 10
-                    for powerup in powerups:
-                        powerup.update()
-                        powerup.draw(screen)
-        # Remove marked lasers from the player's lasers list
-        for laser in lasers_to_remove:
-            if laser in player.lasers:
-                player.lasers.remove(laser)
 
         # Check for collisions with power-ups
         for powerup in powerups:
             if collide(player, powerup):
                 powerups.remove(powerup)
-                if powerup.type == "Apple":
+                # Check the type of the collided power-up
+                if powerup.type == "Apple" and player.health<100:
                     if pygame.time.get_ticks() > double_bonus:
-                        player.health += 10
+                        player.health += 10 
                     else:
-                        player.health += 20
+                        player.health += 20  # Double the health restoration if under double bonus effect
                 elif powerup.type == "Banana":
-                    double_bonus = pygame.time.get_ticks() + 10000
+                    double_bonus = pygame.time.get_ticks() + 10000  # Set the end time for doubling score
                 elif powerup.type == "Strawberry":
+
+                    # Activate invincibility for 10 seconds
                     player.invincible_start_time = pygame.time.get_ticks()+10000
+
+        # Update and draw power-ups
+        for powerup in powerups:
+            powerup.update()
+            powerup.draw(screen)
 
         # Display score
         font = pygame.font.SysFont(None, 36)
         if pygame.time.get_ticks() <= double_bonus:
-            text = font.render(f'Score: {score * 2}', True, (0, 0, 0))
+            text = font.render(f'Score: {score * 2}', True, (0, 0, 0))  # Double the score if the duration is still active
         else:
             text = font.render(f'Score: {score}', True, (0, 0, 0))
-        screen.blit(text, (10, 10))
 
-        # Display timer counter for banana power-up
+        screen.blit(text, (10, 10))
+         # Display timer counter for banana power-up
         if pygame.time.get_ticks() <= double_bonus:
-            remaining_time = (double_bonus - pygame.time.get_ticks()) // 1000
+            remaining_time = (double_bonus - pygame.time.get_ticks()) // 1000  # Convert milliseconds to seconds
             timer_text = font.render(f'Double Bonus: {remaining_time}s', True, (0, 0, 0))
             screen.blit(timer_text, (10, 50))
         # Display timer counter for invincibility time
         if pygame.time.get_ticks() <= player.invincible_start_time:
-            remaining_time = (player.invincible_start_time - pygame.time.get_ticks()) // 1000
-            text_width, _ = font.size(f'Invincible time: {remaining_time}s')
-            text_x = WIDTH - text_width - 10
+            remaining_time = (player.invincible_start_time - pygame.time.get_ticks()) // 1000  # Convert milliseconds to seconds
+            text_width, _ = font.size(f'Invincible time: {remaining_time}s')  # Get the width of the text
+            text_x = WIDTH - text_width - 10  # Calculate the x-coordinate to position the text at the right corner with a margin of 10 pixels
             timer_text = font.render(f'Invincible time: {remaining_time}s', True, (0, 0, 0))
-            screen.blit(timer_text, (text_x, 50))
+            screen.blit(timer_text, (text_x, 50))  # Position the text
+
+        # Draw and move the asteroids
+        draw_asteroids(screen)
+        move_asteroids()
+        
+        # Check collisions between player and asteroids
+        for asteroid in asteroids:
+            if check_collision_player_asteroid(player, asteroid['x'], asteroid['y']):
+                if pygame.time.get_ticks() - player.invincible_start_time >= 1000 or player.invincible_start_time == 0:
+                    player.health -= 10  # Decrement player health by 10
+                asteroids.remove(asteroid)  # Remove the collided asteroid
+                score += 10  # Decrease score by 10
+
+
+
+        # Check collisions between lasers and asteroids
+        for laser in player.lasers:
+            for asteroid in asteroids:
+                if check_collision_lasers_asteroid([laser], asteroid['x'], asteroid['y']):
+                    player.lasers.remove(laser)  # Remove the collided laser
+                    asteroids.remove(asteroid)  # Remove the collided asteroid
+                    score += 10  # Increase score by 10
 
         # Check if player's health is zero or less
         if player.health <= 0:
