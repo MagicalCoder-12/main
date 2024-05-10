@@ -11,7 +11,7 @@ Gravity = 0.5
 
 # Set up the window
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
-pygame.display.set_caption('Spritesheets')
+pygame.display.set_caption('Shadow Avenger')
 
 # Load background
 BG = (250, 250, 250)
@@ -237,7 +237,7 @@ class PowerUp:
         if "Apple" in filename:
             return "Apple"
         elif "Bananas" in filename:
-            return "Banana"
+            return "Bananas"
         elif "Strawberry" in filename:
             return "Strawberry"
         else:
@@ -249,11 +249,14 @@ def collide(obj1, obj2):
     offset_y = obj2.y - obj1.y
     return obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) is not None
 
+current_dir = os.path.dirname(__file__)
+
+
 # Create instances of PowerUp class
 powerup_images = [
-    os.path.join(r'D:\programs\pygame\Assets\Items\Fruits\Apple.png'),
-    os.path.join(r'D:\programs\pygame\Assets\Items\Fruits\Bananas.png'),
-    os.path.join(r'D:\programs\pygame\Assets\Items\Fruits\Strawberry.png')
+    os.path.join(current_dir,'Assets','Items','Fruits','Apple.png'),
+    os.path.join(current_dir,'Assets','Items','Fruits','banana.png'),
+    os.path.join(current_dir,'Assets','Items','Fruits','Strawberry.png')
 ]
 
 # Create an empty list to store PowerUp instances
@@ -272,8 +275,8 @@ add_random_powerup()
 # Timer variables
 last_powerup_time = pygame.time.get_ticks()
 # Define the range for random power-up interval
-min_powerup_interval = 20000  # 20 seconds (in milliseconds)
-max_powerup_interval = 60000  # 60 seconds (in milliseconds)
+min_powerup_interval = 2000  # 20 seconds (in milliseconds)
+max_powerup_interval = 6000  # 60 seconds (in milliseconds)
 
 # Randomly select the power-up interval within the defined range
 powerup_interval = random.randint(min_powerup_interval, max_powerup_interval)
@@ -402,7 +405,7 @@ def main():
                         player.health += 10 
                     else:
                         player.health += 20  # Double the health restoration if under double bonus effect
-                elif powerup.type == "Banana":
+                elif powerup.type == "banana":
                     double_bonus = pygame.time.get_ticks() + 10000  # Set the end time for doubling score
                 elif powerup.type == "Strawberry":
 
@@ -441,31 +444,40 @@ def main():
                     player.health -= 10  # Decrement player health by 10
                     score += 10
                 asteroids.remove(asteroid)  # Remove the collided asteroid
-                # Create a power-up at the asteroid's position
-                new_powerup_pos = [asteroid['x'], asteroid['y']]
-                random_powerup_image = random.choice(powerup_images)
-                new_powerup = PowerUp(random_powerup_image, 17, new_powerup_pos, scale_factor=2)
-                powerups.append(new_powerup)
+                
+        # Define probabilities for each power-up type
+        powerup_probabilities = {
+            "Apple": 0.2,  # 20% chance
+            "Banana": 0.1,  # 10% chance
+            "Strawberry": 0.05  # 5% chance
+        }
 
-        # Check collisions between lasers and asteroids
+      # Check collisions between lasers and asteroids
         lasers_to_remove = []  # Create a list to store lasers that need to be removed
         for laser in player.lasers:
             for asteroid in asteroids:
                 if check_collision_lasers_asteroid([laser], asteroid['x'], asteroid['y']):
-                    new_powerup_pos = [asteroid['x'], asteroid['y']]
-                    random_powerup_image = random.choice(powerup_images)
-                    new_powerup = PowerUp(random_powerup_image, 17, new_powerup_pos, scale_factor=2)
-                    powerups.append(new_powerup)
+                    print("Collision between laser and asteroid detected")
+                    # Determine if a power-up should appear based on probabilities
+                    for powerup_type, probability in powerup_probabilities.items():
+                        if random.random() <= probability:
+                            print(f"Random Number: {random.random()}")
+                            print(f"Power-up Type: {powerup_type}, Probability: {probability}")
+                            # Create a power-up at the asteroid's position
+                            new_powerup_pos = [asteroid['x'], asteroid['y']]
+                            random_powerup_image = os.path.join("Assets", "Items", "Fruits", f"{powerup_type.lower()}.png")
+                            print(f"Selected Power-up Type: {powerup_type}")
+                            new_powerup = PowerUp(random_powerup_image, 17, new_powerup_pos, scale_factor=2)
+                            powerups.append(new_powerup)
                     lasers_to_remove.append(laser)  # Add the laser to the removal list
                     asteroids.remove(asteroid)  # Remove the collided asteroid
                     break  # Break out of the inner loop after collision detection
+
 
         # Remove lasers that collided with asteroids
         for laser in lasers_to_remove:
             player.lasers.remove(laser)
             score+=10
-
-
         # Draw and update power-ups
         for powerup in powerups:
             # Check if power-up is collected by colliding with the player or an asteroid
