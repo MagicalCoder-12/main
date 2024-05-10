@@ -275,8 +275,8 @@ add_random_powerup()
 # Timer variables
 last_powerup_time = pygame.time.get_ticks()
 # Define the range for random power-up interval
-min_powerup_interval = 2000  # 20 seconds (in milliseconds)
-max_powerup_interval = 6000  # 60 seconds (in milliseconds)
+min_powerup_interval = 60000  # 60 seconds (in milliseconds)
+max_powerup_interval = 120000  # 120 seconds (in milliseconds)
 
 # Randomly select the power-up interval within the defined range
 powerup_interval = random.randint(min_powerup_interval, max_powerup_interval)
@@ -447,9 +447,9 @@ def main():
                 
         # Define probabilities for each power-up type
         powerup_probabilities = {
-            "Apple": 0.5,  # 20% chance
-            "Bananas": 0.7,  # 10% chance
-            "Strawberry": 0.1  # 5% chance
+            "Apple": 0.2,  # 20% chance
+            "Bananas": 0.1,  # 10% chance
+            "Strawberry": 0.05  # 5% chance
         }
 
       # Check collisions between lasers and asteroids
