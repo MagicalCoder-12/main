@@ -272,8 +272,8 @@ add_random_powerup()
 # Timer variables
 last_powerup_time = pygame.time.get_ticks()
 # Define the range for random power-up interval
-min_powerup_interval = 5000  # 5 seconds (in milliseconds)
-max_powerup_interval = 15000  # 15 seconds (in milliseconds)
+min_powerup_interval = 20000  # 20 seconds (in milliseconds)
+max_powerup_interval = 60000  # 60 seconds (in milliseconds)
 
 # Randomly select the power-up interval within the defined range
 powerup_interval = random.randint(min_powerup_interval, max_powerup_interval)
@@ -281,6 +281,8 @@ powerup_interval = random.randint(min_powerup_interval, max_powerup_interval)
 # Asteroid variables
 ASTEROID_WIDTH = 29
 ASTEROID_HEIGHT = 29
+ASTROID_SCALE_FACTOR = 2
+ASTROID = pygame.transform.scale(ASTROID, (ASTROID.get_width() * ASTROID_SCALE_FACTOR, ASTROID.get_height() * ASTROID_SCALE_FACTOR))
 asteroid_x = random.randint(0, WIDTH - ASTEROID_WIDTH)  # Randomize asteroid's initial x position
 asteroid_y = -ASTEROID_HEIGHT  # Start asteroid above the screen
 asteroid_vel = 1  # Set asteroid velocity
