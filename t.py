@@ -76,15 +76,22 @@ class Ship:
         for laser in self.lasers:
             laser.draw(window)
 
-    def move_lasers(self, vel, obj):
-        self.cooldown()
+    def move_lasers(self, vel, asteroids):
         for laser in self.lasers:
             laser.move(vel)
             if laser.off_screen(HEIGHT):
                 self.lasers.remove(laser)
-            elif laser.collision(obj):
-                obj.health -= 10
-                self.lasers.remove(laser)
+            else:
+                for asteroid in asteroids:
+                    if laser.collision(asteroid):
+                        asteroids.remove(asteroid)
+                        if laser in self.lasers:
+                            self.lasers.remove(laser)
+
+        # Update shoot cooldown
+        if self.shoot_cooldown > 0:
+            self.shoot_cooldown -= 1
+
 
     def cooldown(self):
         if self.cool_down_counter >= self.COOLDOWN:
@@ -289,7 +296,7 @@ def create_asteroid():
     asteroids.append(asteroid)
 
 # Create initial asteroids
-for _ in range(0,5):  # Create 5 initial asteroids
+for _ in range(5):  # Create 5 initial asteroids
     create_asteroid()
 
 def draw_asteroids(screen):

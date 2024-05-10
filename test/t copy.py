@@ -276,7 +276,7 @@ powerup_interval = 2000  # 2 seconds
 
 
 # Asteroid variables
-ASTEROID_WIDTH = 50
+ASTEROID_WIDTH = 29
 ASTEROID_HEIGHT = 29
 asteroid_x = random.randint(0, WIDTH - ASTEROID_WIDTH)  # Randomize asteroid's initial x position
 asteroid_y = -ASTEROID_HEIGHT  # Start asteroid above the screen
