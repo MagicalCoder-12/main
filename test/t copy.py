@@ -249,13 +249,15 @@ def collide(obj1, obj2):
     offset_y = obj2.y - obj1.y
     return obj1.mask.overlap(obj2.mask, (offset_x, offset_y)) is not None
 
-# Create instances of PowerUp class
-powerup_images = [
-    os.path.join(r'D:\programs\pygame\Assets\Items\Fruits\Apple.png'),
-    os.path.join(r'D:\programs\pygame\Assets\Items\Fruits\Bananas.png'),
-    os.path.join(r'D:\programs\pygame\Assets\Items\Fruits\Strawberry.png')
-]
+# Define the base directory path
+base_dir = os.path.dirname(os.path.abspath(__file__))  # Assuming this code is in the same directory as the Assets folder
 
+# Define the relative paths from the base directory
+powerup_images = [
+    os.path.relpath(os.path.join(base_dir, 'Assets', 'Items', 'Fruits', 'Apple.png')),
+    os.path.relpath(os.path.join(base_dir, 'Assets', 'Items', 'Fruits', 'Bananas.png')),
+    os.path.relpath(os.path.join(base_dir, 'Assets', 'Items', 'Fruits', 'Strawberry.png'))
+]
 # Create an empty list to store PowerUp instances
 powerups = []
 
