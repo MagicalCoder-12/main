@@ -61,7 +61,7 @@ PURPLE_LASER.set_colorkey((0, 0, 0))
 
 # Sounds
 BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "Grenade-1.ogg"))
-BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "player_shoot.wav"))
+BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Sounds", "shoot.mp3"))
 BULLET_FIRE_SOUND.set_volume(0.4)
 
 # Define the number of rows and columns in the sprite sheet
@@ -388,7 +388,7 @@ def main():
         # Shooting logic for continuous shooting while mouse button is held down
         if pygame.mouse.get_pressed()[0]:  # Left mouse button
             player.shoot()
-            #BULLET_FIRE_SOUND.play()
+            BULLET_FIRE_SOUND.play()
         # Player movement
         player.move()
 
