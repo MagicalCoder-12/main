@@ -341,7 +341,7 @@ def main():
     double_bonus = 0
     pygame.mixer.music.load(os.path.join('Assets', 'Sounds', 'music2.wav'))
     pygame.mixer.music.set_volume(0.6)
-    #pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(-1)
     pygame.mouse.set_visible(False)
     
     # Main loop
@@ -444,7 +444,9 @@ def main():
                     player.health -= 10  # Decrement player health by 10
                     score += 10
                 asteroids.remove(asteroid)  # Remove the collided asteroid
-                
+            elif check_collision_player_asteroid(player, asteroid['x'], asteroid['y']):
+                if pygame.time.get_ticks() - player.invincible_start_time <= 1000 or player.invincible_start_time != 0:
+                    score += 10
         # Define probabilities for each power-up type
         powerup_probabilities = {
             "Apple": 0.2,  # 20% chance
